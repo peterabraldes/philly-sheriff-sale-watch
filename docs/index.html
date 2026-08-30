@@ -1,0 +1,712 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="Upcoming Philadelphia sheriff sales filtered to 3+ bedroom homes in a chosen price band.">
+<title>Philadelphia Sheriff Sale Watch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:opsz,wght@6..72,500;6..72,600&family=Public+Sans:wght@400;500;600;700&display=swap">
+<style>
+:root {
+  --ground: #f2f4f7;
+  --surface: #ffffff;
+  --surface-2: #f8fafc;
+  --ink: #101720;
+  --ink-2: #47566b;
+  --ink-3: #6b7c93;
+  --line: #dee4ec;
+  --line-strong: #c6d0dd;
+  --accent: #12457a;
+  --accent-soft: #e7eff7;
+  --brick: #a8492a;
+  --brick-soft: #f7eae4;
+  --ok: #1e6b4f;
+  --ok-soft: #e3f1ea;
+  --warn: #8a5a12;
+  --warn-soft: #faf0dc;
+  --crit: #a32b22;
+  --crit-soft: #fbe9e7;
+  --shadow: 0 1px 2px rgba(16, 23, 32, .06), 0 4px 14px rgba(16, 23, 32, .05);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground: #0d1219;
+    --surface: #141c26;
+    --surface-2: #1b2531;
+    --ink: #e8eef5;
+    --ink-2: #a2b1c4;
+    --ink-3: #7a8aa0;
+    --line: #26323f;
+    --line-strong: #35455674;
+    --accent: #5fa8e8;
+    --accent-soft: #16293c;
+    --brick: #e08a65;
+    --brick-soft: #33211a;
+    --ok: #5fcb9b;
+    --ok-soft: #12271f;
+    --warn: #e0b25f;
+    --warn-soft: #2b2314;
+    --crit: #f08a80;
+    --crit-soft: #33191a;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 4px 16px rgba(0, 0, 0, .3);
+  }
+}
+
+:root[data-theme="dark"] {
+  --ground: #0d1219;
+  --surface: #141c26;
+  --surface-2: #1b2531;
+  --ink: #e8eef5;
+  --ink-2: #a2b1c4;
+  --ink-3: #7a8aa0;
+  --line: #26323f;
+  --line-strong: #354556;
+  --accent: #5fa8e8;
+  --accent-soft: #16293c;
+  --brick: #e08a65;
+  --brick-soft: #33211a;
+  --ok: #5fcb9b;
+  --ok-soft: #12271f;
+  --warn: #e0b25f;
+  --warn-soft: #2b2314;
+  --crit: #f08a80;
+  --crit-soft: #33191a;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 4px 16px rgba(0, 0, 0, .3);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: "Public Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 15px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+.wrap {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 40px 24px 72px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* ---------- masthead ---------- */
+
+.masthead { display: flex; flex-direction: column; gap: 6px; }
+
+.eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+  color: var(--brick);
+}
+
+h1 {
+  font-family: Newsreader, ui-serif, Georgia, serif;
+  font-weight: 600;
+  font-size: clamp(30px, 4.4vw, 42px);
+  line-height: 1.1;
+  letter-spacing: -.015em;
+  margin: 0;
+  text-wrap: balance;
+}
+
+.standfirst {
+  color: var(--ink-2);
+  max-width: 62ch;
+  margin: 0;
+}
+
+/* ---------- summary band ---------- */
+
+/* Flex rather than grid so a partial last row stretches to fill instead of
+   leaving an empty cell. */
+.summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1px;
+  margin: 0;
+  background: var(--line);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.stat {
+  flex: 1 1 165px;
+  background: var(--surface);
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.stat dt {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 0;
+}
+
+.stat dd {
+  margin: 0;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 25px;
+  font-weight: 500;
+  letter-spacing: -.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.stat dd .unit {
+  font-size: 13px;
+  color: var(--ink-3);
+  letter-spacing: 0;
+}
+
+.stat.is-urgent dd { color: var(--crit); }
+.stat.is-fresh dd { color: var(--brick); }
+
+/* ---------- controls ---------- */
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px 28px;
+  align-items: flex-end;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--line);
+}
+
+.field { display: flex; flex-direction: column; gap: 7px; }
+
+.field > span {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.segmented { display: flex; gap: 0; }
+
+.segmented button {
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-2);
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  margin-left: -1px;
+  padding: 7px 14px;
+  cursor: pointer;
+  transition: background .12s, color .12s;
+}
+
+.segmented button:first-child { margin-left: 0; border-radius: 7px 0 0 7px; }
+.segmented button:last-child { border-radius: 0 7px 7px 0; }
+.segmented button:hover { background: var(--surface-2); color: var(--ink); }
+
+.segmented button[aria-pressed="true"] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  position: relative;
+  z-index: 1;
+}
+
+:root[data-theme="dark"] .segmented button[aria-pressed="true"],
+:root:not([data-theme="light"]) .segmented button[aria-pressed="true"] {
+  color: var(--ground);
+}
+
+.count-note {
+  margin-left: auto;
+  font-size: 13px;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- date groups ---------- */
+
+.groups { display: flex; flex-direction: column; gap: 38px; }
+
+.group { display: flex; flex-direction: column; gap: 14px; }
+
+.group-head {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--ink);
+}
+
+.group-date {
+  font-family: Newsreader, ui-serif, Georgia, serif;
+  font-size: 23px;
+  font-weight: 600;
+  letter-spacing: -.01em;
+}
+
+.countdown {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-variant-numeric: tabular-nums;
+}
+
+.countdown.soon { background: var(--crit-soft); color: var(--crit); }
+.countdown.near { background: var(--warn-soft); color: var(--warn); }
+.countdown.far  { background: var(--accent-soft); color: var(--accent); }
+
+.group-count {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--ink-3);
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+/* ---------- cards ---------- */
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+  gap: 14px;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 18px 20px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-shadow: var(--shadow);
+}
+
+.photo {
+  display: block;
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: 7px;
+  overflow: hidden;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+}
+
+.photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.photo .tag {
+  position: absolute;
+  left: 8px;
+  bottom: 8px;
+  background: rgba(0, 0, 0, .66);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  padding: 3px 7px;
+  border-radius: 4px;
+}
+
+.photo:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+.card-head { display: flex; flex-direction: column; gap: 8px; }
+
+.address {
+  font-family: Newsreader, ui-serif, Georgia, serif;
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -.008em;
+  margin: 0;
+  text-wrap: balance;
+}
+
+.sub {
+  font-size: 12.5px;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.chip {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .04em;
+  padding: 3px 8px;
+  border-radius: 5px;
+  background: var(--surface-2);
+  color: var(--ink-2);
+  border: 1px solid var(--line);
+}
+
+.chip.center { background: var(--accent-soft); color: var(--accent); border-color: transparent; }
+.chip.transit { background: var(--ok-soft); color: var(--ok); border-color: transparent; }
+.chip.new { background: var(--brick-soft); color: var(--brick); border-color: transparent; }
+.chip.postponed { background: var(--warn-soft); color: var(--warn); border-color: transparent; }
+
+.figures {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  padding: 12px 0;
+  border-block: 1px solid var(--line);
+}
+
+.figure { display: flex; flex-direction: column; gap: 1px; }
+
+.figure .label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.figure .value {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 15px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.bid-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  font-size: 13px;
+}
+
+.bid-line .k { color: var(--ink-3); }
+
+.bid-line .v {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.bid-line .v.accent { color: var(--brick); }
+
+.geo {
+  font-size: 12.5px;
+  color: var(--ink-2);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.geo span { display: block; }
+
+.card-foot {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  margin-top: auto;
+  padding-top: 4px;
+}
+
+.card-foot a {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+}
+
+.card-foot a:hover { border-bottom-color: var(--accent); }
+.card-foot a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+
+/* ---------- empty + footer ---------- */
+
+.empty {
+  background: var(--surface);
+  border: 1px dashed var(--line-strong);
+  border-radius: 10px;
+  padding: 44px 24px;
+  text-align: center;
+  color: var(--ink-2);
+}
+
+footer {
+  border-top: 1px solid var(--line);
+  padding-top: 20px;
+  font-size: 12.5px;
+  color: var(--ink-3);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 78ch;
+}
+
+footer strong { color: var(--ink-2); font-weight: 600; }
+footer a { color: var(--accent); }
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
+
+/* ---------- phones ---------- */
+
+@media (max-width: 640px) {
+  body { font-size: 14.5px; }
+  .wrap { padding: 26px 15px 52px; gap: 24px; }
+  .stat { flex-basis: 132px; padding: 13px 15px; }
+  .stat dd { font-size: 21px; }
+  .controls { gap: 14px 18px; }
+  .count-note { margin-left: 0; width: 100%; }
+  .segmented button { padding: 7px 11px; font-size: 12.5px; }
+  .cards { grid-template-columns: 1fr; }
+  .group-head { border-bottom-width: 1.5px; }
+  .group-date { font-size: 19px; }
+  .group-count { margin-left: 0; width: 100%; }
+  .card { padding: 15px 16px 14px; }
+  .address { font-size: 17.5px; }
+  .figures { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .figure .value { font-size: 14px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <p class="eyebrow">Sheriff's Office docket &middot; Philadelphia County</p>
+    <h1>Sheriff Sale Watch</h1>
+    <p class="standfirst">
+      Homes on the Philadelphia sheriff sale docket with
+      3+ bedrooms and a city-assessed value between
+      $600,000 and $1,000,000,
+      ranked by how soon they go to auction.
+    </p>
+  </header>
+
+  <dl class="summary"><div class="stat "><dt>Matching sales</dt><dd>16</dd></div><div class="stat is-urgent"><dt>Next auction</dt><dd>9/1/2026<span class="unit"> &middot; 2d</span></dd></div><div class="stat is-fresh"><dt>New this run</dt><dd>16</dd></div><div class="stat "><dt>Center City</dt><dd>4</dd></div><div class="stat "><dt>Near transit</dt><dd>4</dd></div></dl>
+
+  <div class="controls">
+    <label class="field">
+      <span>Location</span>
+      <div class="segmented" data-key="place">
+        <button data-value="all" aria-pressed="true">All</button>
+        <button data-value="transit" aria-pressed="false">Center or transit</button>
+        <button data-value="center" aria-pressed="false">Center City only</button>
+      </div>
+    </label>
+    <label class="field">
+      <span>Sort by</span>
+      <div class="segmented" data-key="order">
+        <button data-value="date" aria-pressed="true">Sale date</button>
+        <button data-value="value" aria-pressed="false">Value</button>
+        <button data-value="bid" aria-pressed="false">Minimum bid</button>
+        <button data-value="close" aria-pressed="false">Closest in</button>
+      </div>
+    </label>
+    <span class="count-note" id="count-note"></span>
+  </div>
+
+  <div class="groups" id="groups"></div>
+
+  <footer>
+    <p style="margin:0">
+      <strong>Read the numbers carefully.</strong> Assessed value is the City's OPA
+      figure, not a listing price, and it usually runs below resale value.
+      The minimum bid is an opening figure, not a purchase price &mdash;
+      bidding routinely closes far above it, and the winner takes the property
+      subject to any surviving liens.
+    </p>
+    <p style="margin:0">
+      <strong>Postponements are normal.</strong> A property marked postponed has
+      already been pulled from the calendar at least once and may move again.
+      Confirm every sale against the
+      <a href="https://salesweb.civilview.com/Sales/SalesSearch?countyId=60" target="_blank" rel="noopener">official docket</a>
+      before you act on it.
+    </p>
+    <p style="margin:0">
+      Docket of 1,495 open sales &middot;
+      16 matched your criteria &middot;
+      16 still upcoming.
+      Data pulled August 30, 2026 at 2:36 pm
+      from the Philadelphia Sheriff's Office and the City property database.
+    </p>
+  </footer>
+</div>
+
+<script>
+const DATA = {"generated_at": "2026-08-30T14:36:35", "criteria": {"market_value_min": 600000, "market_value_max": 1000000, "min_bedrooms": 3, "center_city_max_miles": 1.5, "transit_walk_max_miles": 0.5}, "stats": {"docket_size": 1495, "parcels_matched": 1481, "criteria_matches": 16, "upcoming_sales": 16, "new_since_last_run": 16}, "listings": [{"property_id": "2121882375", "detail_url": "https://salesweb.civilview.com/Sales/SaleDetails?PropertyId=2121882375", "book_and_writ": "2512-441", "opa_number": "472059600", "address": "1944 CECIIL B. MOORE AVENUE PHILADELPHIA PA 19121", "plaintiff": "EF MORTGAGE LLC", "sheriff_number": "25019845", "court_case": "250400822", "sale_date": "9/1/2026", "attorney": "HLADIK, ONORATO & FEDERMAN, LLP", "ward": "47TH", "debt_amount": 846798.59, "minimum_bid": 62900.0, "sale_type": "MORTGAGE FORECLOSURE", "status_history": [{"status": "Postponed", "date": "9/1/2026"}, {"status": "Postponed", "date": "7/7/2026"}, {"status": "Postponed", "date": "7/7/2026"}, {"status": "Postponed", "date": "6/2/2026"}, {"status": "Postponed", "date": "3/3/2026"}, {"status": "Scheduled - Mortgage Foreclosure", "date": "12/2/2025"}], "postponements": 5, "current_status": "Postponed", "sale_date_iso": "2026-09-01", "days_until_sale": 2, "market_value": 762800, "bedrooms": 9, "bathrooms": 3, "livable_sqft": 4200, "lot_sqft": 1600, "year_built": "1915", "zip_code": "19121", "zoning": "CMX2", "property_type": "MULTI FAMILY", "building_description": "ROW CONV/APT 3 STY MASON", "lat": 39.979716322723824, "lon": -75.16733290490802, "miles_to_city_hall": 1.9, "nearest_station": "Cecil B. Moore", "station_line": "BSL", "miles_to_station": 0.72, "is_center_city": false, "is_transit_walkable": false, "location_label": "Outside preferences", "is_new": true}, {"property_id": "2121883607", "detail_url": "https://salesweb.civilview.com/Sales/SaleDetails?PropertyId=2121883607", "book_and_writ": "2609-393", "opa_number": "365038700", "address": "1243 SOUTH 15TH STREET PHILADELPHIA PA 19146", "plaintiff": "DELAROSA ASSET MANAGEMENT LLC D/B/A DELAROSA LENDING GROUP", "sheriff_number": "26011914", "court_case": "260202253", "sale_date": "9/1/2026", "attorney": "EISENBERG, GOLD & AGRAWAL, P.C.", "ward": "36TH", "debt_amount": 1057132.91, "minimum_bid": 21700.0, "sale_type": "MORTGAGE FORECLOSURE", "status_history": [{"status": "Scheduled - Mortgage Foreclosure", "date": "9/1/2026"}], "postponements": 0, "current_status": "Scheduled - Mortgage Foreclosure", "sale_date_iso": "2026-09-01", "days_until_sale": 2, "market_value": 785800, "bedrooms": 4, "bathrooms": 3, "livable_sqft": 2800, "lot_sqft": 1600, "year_built": "1915", "zip_code": "19146", "zoning": "RSA5", "property_type": "SINGLE FAMILY", "building_description": "ROW 3 STY MASONRY", "lat": 39.93462341276249, "lon": -75.16892670842678, "miles_to_city_hall": 1.26, "nearest_station": "Ellsworth-Federal", "station_line": "BSL", "miles_to_station": 0.11, "is_center_city": true, "is_transit_walkable": true, "location_label": "Center City", "is_new": true}, {"property_id": "2121883639", "detail_url": "https://salesweb.civilview.com/Sales/SaleDetails?PropertyId=2121883639", "book_and_writ": "2609-405", "opa_number": "202031201", "address": "1908 NORTH 7TH STREET PHILADELPHIA PA 19122", "plaintiff": "METROPOLITAN TOWER LIFE INSURANCE COMPANY,", "sheriff_number": "26012000", "court_case": "260401471", "sale_date": "9/1/2026", "attorney": "FRIEDMAN VARTOLO LLP", "ward": "20TH", "debt_amount": 581284.34, "minimum_bid": 43800.0, "sale_type": "MORTGAGE FORECLOSURE", "status_history": [{"status": "Scheduled - Mortgage Foreclosure", "date": "9/1/2026"}], "postponements": 0, "current_status": "Scheduled - Mortgage Foreclosure", "sale_date_iso": "2026-09-01", "days_until_sale": 2, "market_value": 715500, "bedrooms": 4, "bathrooms": 3, "livable_sqft": 2503, "lot_sqft": 1480, "year_built": "1915", "zip_code": "19122", "zoning": "RM1", "property_type": "MULTI FAMILY", "building_description": "ROW 2 STY MASONRY", "lat": 39.980586603470684, "lon": -75.14650006815805, "miles_to_city_hall": 2.15, "nearest_station": "Temple University", "station_line": "RR", "miles_to_station": 0.16, "is_center_city": false, "is_transit_walkable": true, "location_label": "Transit-accessible", "is_new": true}, {"property_id": "2121882521", "detail_url": "https://salesweb.civilview.com/Sales/SaleDetails?PropertyId=2121882521", "book_and_writ": "2602-476A", "opa_number": "471129400", "address": "1508 WEST OXFORD STREET PHILADELPHIA PA 19121", "plaintiff": "U.S. BANK TRUST NATIONAL ASSOCIATION, NOT IN ITS INDIVIDUAL CAPACITY BUT SOLELY AS OWNER TRUSTEE FOR LEGACY MORTGAGE ASSET TRUST 2024-INV1,", "sheriff_number": "25024548", "court_case": "250603038", "sale_date": "10/6/2026", "attorney": "FRIEDMAN VARTOLO LLP", "ward": "47TH", "debt_amount": 1288455.43, "minimum_bid": 43200.0, "sale_type": "MORTGAGE FORECLOSURE", "status_history": [{"status": "Postponed", "date": "10/6/2026"}, {"status": "Postponed", "date": "8/4/2026"}, {"status": "Postponed", "date": "6/2/2026"}, {"status": "Postponed", "date": "4/7/2026"}, {"status": "Scheduled - Mortgage Foreclosure", "date": "2/3/2026"}], "postponements": 4, "current_status": "Postponed", "sale_date_iso": "2026-10-06", "days_until_sale": 37, "market_value": 676700, "bedrooms": 7, "bathrooms": 6, "livable_sqft": 3510, "lot_sqft": 1421, "year_built": "1915", "zip_code": "19121", "zoning": "RM1", "property_type": "MULTI FAMILY", "building_description": "ROW CONV/APT 3 STY MASON", "lat": 39.9774364516292, "lon": -75.16081583366669, "miles_to_city_hall": 1.74, "nearest_station": "Cecil B. Moore", "station_line": "BSL", "miles_to_station": 0.41, "is_center_city": false, "is_transit_walkable": true, "location_label": "Transit-accessible", "is_new": true}, {"property_id": "2121882664", "detail_url": "https://salesweb.civilview.com/Sales/SaleDetails?PropertyId=2121882664", "book_and_writ": "2604-365", "opa_number": "272055000", "address": "4231 OSAGE AVENUE PHILADELPHIA PA 19104", "plaintiff": "VELOCITY COMMERCIAL CAPITAL LLC", "sheriff_number": "26002311", "court_case": "231001315", "sale_date": "10/6/2026", "attorney": "STERN & EISENBERG, PC", "ward": "27TH", "debt_amount": 692829.63, "minimum_bid": 39200.0, "sale_type": "MORTGAGE FORECLOSURE", "status_history": [{"status": "Postponed", "date": "10/6/2026"}, {"status": "Postponed", "date": "8/4/2026"}, {"status": "Postponed", "date": "6/2/2026"}, {"status": "Scheduled - Mortgage Foreclosure", "date": "4/7/2026"}], "postponements": 3, "current_status": "Postponed", "sale_date_iso": "2026-10-06", "days_until_sale": 37, "market_value": 672800, "bedrooms": 3, "bathrooms": 2, "livable_sqft": 2880, "lot_sqft": 2165, "year_built": "1915", "zip_code": "19104", "zoning": "RSA5", "property_type": "SINGLE FAMILY", "building_description": "ROW 3.5 STY MASONRY", "lat": 39.95069598414313, "lon": -75.20849753220824, "miles_to_city_hall": 2.39, "nearest_station": "40th Street", "station_line": "MFL", "miles_to_station": 0.5, "is_center_city": false, "is_transit_walkable": false, "location_label": "Outside preferences", "is_new": true}, {"property_id": "2121882772", "detail_url": "https://salesweb.civilview.com/Sales/SaleDetails?PropertyId=2121882772", "book_and_writ": "2605-312", "opa_number": "251182600", "address": "3077 SALMON STREET PHILADELPHIA PA 19134", "plaintiff": "EF MORTGAGE, LLC", "sheriff_number": "26003859", "court_case": "250501575", "sale_date": "10/6/2026", "attorney": "PINCUS LAW GROUP, PLLC", "ward": "25TH", "debt_amount": 1186630.36, "minimum_bid": 28500.0, "sale_type": "MORTGAGE FORECLOSURE", "status_history": [{"status": "Postponed", "date": "10/6/2026"}, {"status": "Postponed", "date": "9/1/2026"}, {"status": "Postponed", "date": "7/7/2026"}, {"status": "Scheduled - Mortgage Foreclosure", "date": "5/5/2026"}], "postponements": 3, "current_status": "Postponed", "sale_date_iso": "2026-10-06", "days_until_sale": 37, "market_value": 738400, "bedrooms": 3, "bathrooms": 1, "livable_sqft": 2487, "lot_sqft": 3334, "year_built": "2024", "zip_code": "19134", "zoning": "CMX2", "property_type": "SINGLE FAMILY", "building_description": "ROW 2 STY MASONRY", "lat": 39.981876232960595, "lon": -75.10456844878904, "miles_to_city_hall": 3.73, "nearest_station": "Huntingdon", "station_line": "MFL", "miles_to_station": 1.1, "is_center_city": false, "is_transit_walkable": false, "location_label": "Outside preferences", "is_new": true}, {"property_id": "2121883311", "detail_url": "https://salesweb.civilview.com/Sales/SaleDetails?PropertyId=2121883311", "book_and_writ": "2608-380", "opa_number": "152344400", "address": "2916 POPLAR STREET PHILADELPHIA PA 19130", "plaintiff": "LOAN FUNDER LLC, SERIES 32049", "sheriff_number": "26009038", "court_case": "250703230", "sale_date": "10/6/2026", "attorney": "WEBER GALLAGHER SIMPSON STAPLETON FIRES & NEWBY LLP", "ward": "15TH", "debt_amount": 976627.22, "minimum_bid": 34200.0, "sale_type": "MORTGAGE FORECLOSURE", "status_history": [{"status": "Postponed", "date": "10/6/2026"}, {"status": "Scheduled - Mortgage Foreclosure", "date": "8/4/2026"}], "postponements": 1, "current_status": "Postponed", "sale_date_iso": "2026-10-06", "days_until_sale": 37, "market_value": 653200, "bedrooms": 4, "bathrooms": 3, "livable_sqft": 2718, "lot_sqft": 1816, "year_built": "1920", "zip_code": "19130", "zoning": "RM1", "property_type": "MULTI FAMILY", "building_description": "ROW CONV/APT 3 STY MASON", "lat": 39.973086817520404, "lon": -75.1844824754426, "miles_to_city_hall": 1.81, "nearest_station": "30th Street Station", "station_line": "RR", "miles_to_station": 1.22, "is_center_city": false, "is_transit_walkable": false, "location_label": "Outside preferences", "is_new": true}, {"property_id": "2121883775", "detail_url": "https://salesweb.civilview.com/Sales/SaleDetails?PropertyId=2121883775", "book_and_writ": "2610-327", "opa_number": "262385900", "address": "2003 RESERVE DRIVE PHILADELPHIA PA 19145", "plaintiff": "U.S. BANK TRUST NATIONAL ASSOCIATION, NOT IN ITS INDIVIDUAL CAPACITY BUT SOLELY AS OWNER TRUSTEE FOR RCAF ACQUISITION TRUST,", "sheriff_number": "26012705", "court_case": "251103835", "sale_date": "10/6/2026", "attorney": "RAS CITRON, LLC", "ward": "26TH", "debt_amount": 359295.12, "minimum_bid": null, "sale_type": "MORTGAGE FORECLOSURE", "status_history": [{"status": "Scheduled - Mortgage Foreclosure", "date": "10/6/2026"}], "postponements": 0, "current_status": "Scheduled - Mortgage Foreclosure", "sale_date_iso": "2026-10-06", "days_until_sale": 37, "market_value": 615000, "bedrooms": 4, "bathrooms": 3, "livable_sqft": 2754, "lot_sqft": 2519, "year_built": "2004", "zip_code": "19145", "zoning": "RM1", "property_type": "SINGLE FAMILY", "building_description": "ROW W/GAR 2.5 STY MASONRY", "lat": 39.90823660017834, "lon": -75.18344407091686, "miles_to_city_hall": 3.23, "nearest_station": "NRG", "station_line": "BSL", "miles_to_station": 0.63, "is_center_city": false, "is_transit_walkable": false, "location_label": "Outside preferences", "is_new": true}, {"property_id": "2121883780", "detail_url": "https://salesweb.civilview.com/Sales/SaleDetails?PropertyId=2121883780", "book_and_writ": "2610-332", "opa_number": "272079900", "address": "4213 BALTIMORE AVENUE PHILADELPHIA PA 19104", "plaintiff": "THE BANK OF NEW YORK MELLON, F/K/A THE BANK OF NEW YORK AS TRUSTEE FOR REGISTERED HOLDERS OF CWABS, INC., ASSET-BACKED CERTIFICATES, SERIES 2005-7 C/O CARRINGTON MORTGAGE SERVICES, LLC", "sheriff_number": "26012777", "court_case": "220500401", "sale_date": "10/6/2026", "attorney": "KML LAW GROUP, P.C.", "ward": "27TH", "debt_amount": 122411.21, "minimum_bid": null, "sale_type": "MORTGAGE FORECLOSURE", "status_history": [{"status": "Scheduled - Mortgage Foreclosure", "date": "10/6/2026"}], "postponements": 0, "current_status": "Scheduled - Mortgage Foreclosure", "sale_date_iso": "2026-10-06", "days_until_sale": 37, "market_value": 738100, "bedrooms": 6, "bathrooms": 2, "livable_sqft": 2640, "lot_sqft": 2137, "year_built": "1894", "zip_code": "19104", "zoning": "RTA1", "property_type": "SINGLE FAMILY", "building_description": "SEMI/DET 3 STY MASONRY", "lat": 39.95000986451235, "lon": -75.20799578346974, "miles_to_city_hall": 2.36, "nearest_station": "40th Street", "station_line": "MFL", "miles_to_station": 0.52, "is_center_city": false, "is_transit_walkable": false, "location_label": "Outside preferences", "is_new": true}, {"property_id": "2121884122", "detail_url": "https://salesweb.civilview.com/Sales/SaleDetails?PropertyId=2121884122", "book_and_writ": "2610-2003", "opa_number": "223186800", "address": "434 WEST MOUNT PLEASANT AVENUE PHILADELPHIA PA 19119", "plaintiff": "CITY OF PHILADELPHIA", "sheriff_number": "26016239", "court_case": "2210T0080", "sale_date": "10/27/2026", "attorney": "LINEBARGER GOGGAN BLAIR & SAMPSON, LLP", "ward": "22ND", "debt_amount": null, "minimum_bid": 1600.0, "sale_type": "TAX COLLECTION LINEBARGER 2000", "status_history": [{"status": "Scheduled - Tax", "date": "10/27/2026"}], "postponements": 0, "current_status": "Scheduled - Tax", "sale_date_iso": "2026-10-27", "days_until_sale": 58, "market_value": 623400, "bedrooms": 3, "bathrooms": 0, "livable_sqft": 2032, "lot_sqft": 9386, "year_built": "1925", "zip_code": "19119", "zoning": "RSA3", "property_type": "SINGLE FAMILY", "building_description": "DET W/D GAR 2.5 STY MASON", "lat": 40.051903961980564, "lon": -75.19621494842285, "miles_to_city_hall": 7.09, "nearest_station": "Mount Airy", "station_line": "RR", "miles_to_station": 0.33, "is_center_city": false, "is_transit_walkable": true, "location_label": "Transit-accessible", "is_new": true}, {"property_id": "2121882891", "detail_url": "https://salesweb.civilview.com/Sales/SaleDetails?PropertyId=2121882891", "book_and_writ": "2606-391", "opa_number": "183181700", "address": "1803 NORTH 6TH STREET PHILADELPHIA PA 19122", "plaintiff": "BANK OF AMERICA, N.A.", "sheriff_number": "26005274", "court_case": "250302847", "sale_date": "11/3/2026", "attorney": "MCCABE, WEISBERG & CONWAY, LLC", "ward": "18TH", "debt_amount": 782481.6, "minimum_bid": 45700.0, "sale_type": "MORTGAGE FORECLOSURE", "status_history": [{"status": "Postponed", "date": "11/3/2026"}, {"status": "Postponed", "date": "7/7/2026"}, {"status": "Scheduled - Mortgage Foreclosure", "date": "6/2/2026"}], "postponements": 2, "current_status": "Postponed", "sale_date_iso": "2026-11-03", "days_until_sale": 65, "market_value": 745200, "bedrooms": 5, "bathrooms": null, "livable_sqft": 3069, "lot_sqft": 1024, "year_built": "2020", "zip_code": "19122", "zoning": "RSA5", "property_type": "MULTI FAMILY", "building_description": "VACANT LAND RESIDE < ACRE", "lat": 39.978716410042026, "lon": -75.144785571005, "miles_to_city_hall": 2.07, "nearest_station": "Temple University", "station_line": "RR", "miles_to_station": 0.3, "is_center_city": false, "is_transit_walkable": true, "location_label": "Transit-accessible", "is_new": true}, {"property_id": "2121883108", "detail_url": "https://salesweb.civilview.com/Sales/SaleDetails?PropertyId=2121883108", "book_and_writ": "2607-349", "opa_number": "312000392", "address": "2018 NORTHBANK PLACE PHILADELPHIA PA 19125", "plaintiff": "PARKE BANK", "sheriff_number": "26007223", "court_case": "251203193", "sale_date": "11/3/2026", "attorney": "BERGER LAW GROUP, P.C.", "ward": "31ST", "debt_amount": 506653.77, "minimum_bid": 36000.0, "sale_type": "MORTGAGE FORECLOSURE", "status_history": [{"status": "Postponed", "date": "11/3/2026"}, {"status": "Postponed", "date": "9/1/2026"}, {"status": "Scheduled - Mortgage Foreclosure", "date": "7/7/2026"}], "postponements": 2, "current_status": "Postponed", "sale_date_iso": "2026-11-03", "days_until_sale": 65, "market_value": 750000, "bedrooms": 3, "bathrooms": 3, "livable_sqft": 1656, "lot_sqft": 573, "year_built": "2023", "zip_code": "19125", "zoning": "CMX3", "property_type": "SINGLE FAMILY", "building_description": "VACANT LAND INDUST ACRE+", "lat": 39.970641869356946, "lon": -75.11860313275282, "miles_to_city_hall": 2.69, "nearest_station": "Berks", "station_line": "MFL", "miles_to_station": 0.76, "is_center_city": false, "is_transit_walkable": false, "location_label": "Outside preferences", "is_new": true}, {"property_id": "2121883536", "detail_url": "https://salesweb.civilview.com/Sales/SaleDetails?PropertyId=2121883536", "book_and_writ": "2609-368", "opa_number": "302106700", "address": "2321 MADISON SQUARE PHILADELPHIA PA 19146", "plaintiff": "THE BANK OF NEW YORK MELLON FKA THE BANK OF NEW YORK, AS TRUSTEE FOR THE CERTIFICATE HOLDERS CWALT, INC., ALTERNATIVE LOAN TRUST 2006-4CB, MORTGAGE PASS-THROUGH CERTIFICATES, SERIES 2006-4CB", "sheriff_number": "26011598", "court_case": "220501785", "sale_date": "11/3/2026", "attorney": "HILL WALLACK LLP", "ward": "30TH", "debt_amount": 268073.42, "minimum_bid": 36000.0, "sale_type": "MORTGAGE FORECLOSURE", "status_history": [{"status": "Postponed", "date": "11/3/2026"}, {"status": "Scheduled - Mortgage Foreclosure", "date": "9/1/2026"}], "postponements": 1, "current_status": "Postponed", "sale_date_iso": "2026-11-03", "days_until_sale": 65, "market_value": 659200, "bedrooms": 4, "bathrooms": 2, "livable_sqft": 1620, "lot_sqft": 646, "year_built": "1880", "zip_code": "19146", "zoning": "RSA5", "property_type": "SINGLE FAMILY", "building_description": "ROW 3 STY MASONRY", "lat": 39.942458719517425, "lon": -75.18195661034206, "miles_to_city_hall": 1.19, "nearest_station": "University City", "station_line": "RR", "miles_to_station": 0.53, "is_center_city": true, "is_transit_walkable": false, "location_label": "Center City", "is_new": true}, {"property_id": "2121884113", "detail_url": "https://salesweb.civilview.com/Sales/SaleDetails?PropertyId=2121884113", "book_and_writ": "2611-407", "opa_number": "301089805", "address": "1615 FITZWATER STREET PHILADELPHIA PA 19146", "plaintiff": "SUN EAST FEDERAL CREDIT UNION", "sheriff_number": "26016178", "court_case": "250602265", "sale_date": "11/3/2026", "attorney": "LARKIN & VAKIL, ATTORNEYS AT LAW", "ward": "30TH", "debt_amount": 262666.19, "minimum_bid": null, "sale_type": "MORTGAGE FORECLOSURE", "status_history": [{"status": "Scheduled - Mortgage Foreclosure", "date": "11/3/2026"}], "postponements": 0, "current_status": "Scheduled - Mortgage Foreclosure", "sale_date_iso": "2026-11-03", "days_until_sale": 65, "market_value": 664800, "bedrooms": 3, "bathrooms": 2, "livable_sqft": 1431, "lot_sqft": 629, "year_built": "2013", "zip_code": "19146", "zoning": "RM1", "property_type": "SINGLE FAMILY", "building_description": "ROW 3 STY MASONRY", "lat": 39.942421874943264, "lon": -75.16969683959232, "miles_to_city_hall": 0.76, "nearest_station": "Lombard-South", "station_line": "BSL", "miles_to_station": 0.2, "is_center_city": true, "is_transit_walkable": true, "location_label": "Center City", "is_new": true}, {"property_id": "2121884144", "detail_url": "https://salesweb.civilview.com/Sales/SaleDetails?PropertyId=2121884144", "book_and_writ": "2611-420", "opa_number": "521175200", "address": "5320 WYNNEFIELD AVENUE PHILADELPHIA PA 19131", "plaintiff": "TVC MORTGAGE TRUST 2025-RRTL1 BY US BANK TRUST NATIONAL ASSOCIATION, NOT IN ITS INDIVIDUAL CAPACITY BUT SOLELY AS OWNER", "sheriff_number": "26016283", "court_case": "260401299", "sale_date": "11/3/2026", "attorney": "HILL WALLACK LLP", "ward": "52ND", "debt_amount": 558944.49, "minimum_bid": null, "sale_type": "MORTGAGE FORECLOSURE", "status_history": [{"status": "Scheduled - Mortgage Foreclosure", "date": "11/3/2026"}], "postponements": 0, "current_status": "Scheduled - Mortgage Foreclosure", "sale_date_iso": "2026-11-03", "days_until_sale": 65, "market_value": 650000, "bedrooms": 4, "bathrooms": 3, "livable_sqft": 4050, "lot_sqft": 6760, "year_built": "1925", "zip_code": "19131", "zoning": "RSD3", "property_type": "SINGLE FAMILY", "building_description": "DET W/D GAR 2.5 STY STONE", "lat": 39.99147800586037, "lon": -75.23180797153312, "miles_to_city_hall": 4.51, "nearest_station": "Wynnefield Avenue", "station_line": "RR", "miles_to_station": 0.67, "is_center_city": false, "is_transit_walkable": false, "location_label": "Outside preferences", "is_new": true}, {"property_id": "2121882973", "detail_url": "https://salesweb.civilview.com/Sales/SaleDetails?PropertyId=2121882973", "book_and_writ": "2605-017", "opa_number": "083012122", "address": "2028 ARCH STREET PHILADELPHIA PA 19103", "plaintiff": "CITY OF PHILADELPHIA", "sheriff_number": "26006270", "court_case": "2509T0183", "sale_date": "11/18/2026", "attorney": "CITY OF PHILADELPHIA LAW DEPARTMENT", "ward": "8TH", "debt_amount": null, "minimum_bid": 1600.0, "sale_type": "TAX DELINQUENT", "status_history": [{"status": "Postponed", "date": "11/18/2026"}, {"status": "Scheduled - City Tax", "date": "5/20/2026"}], "postponements": 1, "current_status": "Postponed", "sale_date_iso": "2026-11-18", "days_until_sale": 80, "market_value": 865800, "bedrooms": 3, "bathrooms": 2, "livable_sqft": 2022, "lot_sqft": 468, "year_built": "1970", "zip_code": "19103", "zoning": "RM1", "property_type": "SINGLE FAMILY", "building_description": "ROW W/GAR 4 STY MASONRY", "lat": 39.955610411691985, "lon": -75.17386041458673, "miles_to_city_hall": 0.59, "nearest_station": "Suburban Station", "station_line": "RR", "miles_to_station": 0.33, "is_center_city": true, "is_transit_walkable": true, "location_label": "Center City", "is_new": true}]};
+const PHOTO_MODE = "links";   // 'streetview' when an API key is set, else 'links'
+const SV_KEY = "";
+const listings = DATA.listings;
+
+// The county docket carries no photographs, so the nearest thing to a picture
+// of the house is Google Street View at its coordinates.
+function streetViewLink(r) {
+  return `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${r.lat},${r.lon}`;
+}
+
+function photo(r) {
+  if (PHOTO_MODE !== 'streetview' || !r.lat) return '';
+  const src = `https://maps.googleapis.com/maps/api/streetview`
+    + `?size=640x360&fov=80&location=${r.lat},${r.lon}&key=${SV_KEY}`;
+  return `<a class="photo" href="${streetViewLink(r)}" target="_blank" rel="noopener">
+      <img src="${src}" alt="Street View of ${r.address}" loading="lazy">
+      <span class="tag">Street View</span>
+    </a>`;
+}
+let place = 'all';
+let order = 'date';
+
+const money = n => n == null ? null : '$' + Math.round(n).toLocaleString('en-US');
+
+function passes(r) {
+  if (place === 'center') return r.is_center_city;
+  if (place === 'transit') return r.is_center_city || r.is_transit_walkable;
+  return true;
+}
+
+function sortRows(rows) {
+  const by = {
+    date: (a, b) => (a.days_until_sale ?? 1e9) - (b.days_until_sale ?? 1e9),
+    value: (a, b) => (b.market_value ?? 0) - (a.market_value ?? 0),
+    bid: (a, b) => (a.minimum_bid ?? 1e12) - (b.minimum_bid ?? 1e12),
+    close: (a, b) => (a.miles_to_city_hall ?? 1e9) - (b.miles_to_city_hall ?? 1e9),
+  }[order];
+  return rows.slice().sort(by);
+}
+
+function chips(r) {
+  const out = [];
+  if (r.is_new) out.push(['new', 'New']);
+  if (r.is_center_city) out.push(['center', 'Center City']);
+  else if (r.is_transit_walkable) out.push(['transit', 'Near transit']);
+  if (r.postponements > 0) {
+    out.push(['postponed', `Postponed ${r.postponements}&times;`]);
+  }
+  if (r.sale_type && /tax/i.test(r.sale_type)) out.push(['', 'Tax sale']);
+  return out.map(([c, t]) => `<span class="chip ${c}">${t}</span>`).join('');
+}
+
+function card(r) {
+  const beds = r.bedrooms ?? '&mdash;';
+  const baths = r.bathrooms ?? '&mdash;';
+  const sqft = r.livable_sqft ? Number(r.livable_sqft).toLocaleString('en-US') : '&mdash;';
+  const bid = money(r.minimum_bid);
+  const debt = money(r.debt_amount);
+  const pct = (r.minimum_bid && r.market_value)
+    ? ` <span style="color:var(--ink-3)">(${Math.round(r.minimum_bid / r.market_value * 100)}% of value)</span>` : '';
+  const station = r.nearest_station
+    ? `${r.miles_to_station} mi to ${r.nearest_station} <span style="color:var(--ink-3)">(${r.station_line})</span>` : '';
+
+  return `<article class="card">
+    ${photo(r)}
+    <div class="card-head">
+      <h3 class="address">${r.address.replace(/ PHILADELPHIA PA \d+$/, '')}</h3>
+      <div class="sub">${r.zip_code || ''} &middot; Ward ${String(r.ward || '').replace(/(ST|ND|RD|TH)$/i, '') || '&mdash;'} &middot; ${r.property_type || ''}${r.year_built ? ' &middot; built ' + r.year_built : ''}</div>
+      <div class="chips">${chips(r)}</div>
+    </div>
+
+    <div class="figures">
+      <div class="figure"><span class="label">Assessed</span><span class="value">${money(r.market_value) || '&mdash;'}</span></div>
+      <div class="figure"><span class="label">Beds / baths</span><span class="value">${beds} / ${baths}</span></div>
+      <div class="figure"><span class="label">Livable</span><span class="value">${sqft}<span style="font-size:11px;color:var(--ink-3)"> sqft</span></span></div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:5px">
+      <div class="bid-line"><span class="k">Minimum bid</span><span class="v accent">${bid || 'Not yet posted'}${pct}</span></div>
+      <div class="bid-line"><span class="k">Debt on judgment</span><span class="v">${debt || '&mdash;'}</span></div>
+    </div>
+
+    <div class="geo">
+      <span>${r.miles_to_city_hall != null ? r.miles_to_city_hall + ' mi from City Hall' : 'Location unknown'}</span>
+      ${station ? `<span>${station}</span>` : ''}
+    </div>
+
+    <div class="card-foot">
+      <a href="${r.detail_url}" target="_blank" rel="noopener">Official docket &rarr;</a>
+      ${r.lat ? `<a href="https://www.google.com/maps/search/?api=1&query=${r.lat},${r.lon}" target="_blank" rel="noopener">Map &rarr;</a>` : ''}
+      ${r.lat ? `<a href="${streetViewLink(r)}" target="_blank" rel="noopener">Street View &rarr;</a>` : ''}
+    </div>
+  </article>`;
+}
+
+function render() {
+  const rows = sortRows(listings.filter(passes));
+  const root = document.getElementById('groups');
+  document.getElementById('count-note').textContent =
+    `${rows.length} of ${listings.length} shown`;
+
+  if (!rows.length) {
+    root.innerHTML = `<div class="empty">No upcoming sales match this filter.
+      Try widening the price band in <code>config.json</code> and re-running the scraper.</div>`;
+    return;
+  }
+
+  // Group by auction date when sorting by date; otherwise show one flat list.
+  if (order !== 'date') {
+    root.innerHTML = `<div class="group"><div class="cards">${rows.map(card).join('')}</div></div>`;
+    return;
+  }
+
+  const groups = [];
+  for (const r of rows) {
+    const last = groups[groups.length - 1];
+    if (last && last.date === r.sale_date) last.rows.push(r);
+    else groups.push({ date: r.sale_date, iso: r.sale_date_iso, days: r.days_until_sale, rows: [r] });
+  }
+
+  root.innerHTML = groups.map(g => {
+    const cls = g.days <= 14 ? 'soon' : g.days <= 45 ? 'near' : 'far';
+    const when = g.days === 0 ? 'today' : g.days === 1 ? 'tomorrow' : `in ${g.days} days`;
+    // Sale dates arrive as M/D/YYYY, which Date() won't parse reliably; the
+    // scraper also emits an ISO form, so use that.
+    const pretty = g.iso
+      ? new Date(g.iso + 'T12:00:00').toLocaleDateString('en-US',
+          { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })
+      : g.date;
+    return `<section class="group">
+      <div class="group-head">
+        <span class="group-date">${pretty}</span>
+        <span class="countdown ${cls}">${when}</span>
+        <span class="group-count">${g.rows.length} propert${g.rows.length === 1 ? 'y' : 'ies'}</span>
+      </div>
+      <div class="cards">${g.rows.map(card).join('')}</div>
+    </section>`;
+  }).join('');
+}
+
+for (const group of document.querySelectorAll('.segmented')) {
+  group.addEventListener('click', e => {
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    const key = group.dataset.key;
+    if (key === 'place') place = btn.dataset.value; else order = btn.dataset.value;
+    for (const b of group.querySelectorAll('button')) {
+      b.setAttribute('aria-pressed', String(b === btn));
+    }
+    render();
+  });
+}
+
+render();
+</script>
+</body>
+</html>

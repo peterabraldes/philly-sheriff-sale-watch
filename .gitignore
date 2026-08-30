@@ -1,0 +1,9 @@
+# Scraped data stays local: listings.json carries the owner names attached to
+# each docket entry, and those have no place in a public repo.
+data/
+
+__pycache__/
+*.pyc
+
+# Artifact-flavoured build output (no doctype); the published page is docs/index.html
+dashboard.html

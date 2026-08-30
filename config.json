@@ -1,0 +1,27 @@
+{
+  "_comment": "Search criteria for the Philadelphia sheriff sale dashboard. Edit freely and re-run scrape.py.",
+
+  "market_value_min": 600000,
+  "market_value_max": 1000000,
+  "min_bedrooms": 3,
+
+  "_comment_value": "market_value is the City of Philadelphia OPA assessed market value. It is the only value figure available for every parcel, and it tends to run BELOW true resale price. Widening the band is the easiest way to catch more homes.",
+
+  "residential_category_codes": [1, 2],
+  "_comment_categories": "1 = SINGLE FAMILY, 2 = MULTI FAMILY. Add 3 (MIXED USE) if you want commercial/residential combos.",
+
+  "center_city_max_miles": 1.5,
+  "_comment_center": "Straight-line distance from City Hall that counts as 'center of the city'.",
+
+  "transit_walk_max_miles": 0.5,
+  "_comment_transit": "Distance to the nearest SEPTA subway/el/regional rail station that counts as walkable.",
+
+  "include_only_upcoming_sales": true,
+  "_comment_upcoming": "If true, only sales dated today or later appear. Set false to also see past/expired listings.",
+
+  "google_streetview_api_key": "",
+  "_comment_photos": "The county docket has no property photos. Paste a Google Street View Static API key here and the published page shows a Street View thumbnail of each house. Left blank, every card still links out to Street View. Get a key at console.cloud.google.com, enable 'Street View Static API', and restrict it by HTTP referrer to your GitHub Pages domain.",
+
+  "request_delay_seconds": 0.4,
+  "_comment_delay": "Politeness delay between requests to the county server. Do not set below 0.25."
+}
