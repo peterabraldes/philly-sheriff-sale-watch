@@ -369,11 +369,14 @@ def main():
 
     cache_path.write_text(json.dumps(cache), encoding="utf-8")
 
-    # Flag anything that wasn't in the previous run.
+    # Flag anything that wasn't in the previous run. The very first run has
+    # nothing to compare against, so it records a baseline rather than
+    # announcing every listing as new.
     seen_path = DATA / "seen.json"
+    first_run = not seen_path.exists()
     seen = set(load_json(seen_path, []))
     for item in results:
-        item["is_new"] = item["property_id"] not in seen
+        item["is_new"] = (not first_run) and item["property_id"] not in seen
     if results:
         seen_path.write_text(
             json.dumps(sorted(seen | {r["property_id"] for r in results})),
