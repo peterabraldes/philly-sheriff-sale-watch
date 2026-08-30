@@ -87,9 +87,45 @@ on a public page.
 
 This tool is a filter over public records, not advice. Verify everything.
 
+## How bidding works
+
+Philadelphia runs its sheriff sales online through Bid4Assets, not in a
+courtroom. The dashboard has this as an expandable panel; the short version:
+
+1. **Register with Bid4Assets** ahead of the sale date. Bidders must be 18+.
+2. **Post the deposit** — $10,000 plus a $35 non-refundable processing fee,
+   cleared *before the auction opens*. One deposit qualifies you for every
+   property selling that day. Losing bidders are refunded in about ten business
+   days.
+3. **Do your diligence first.** Properties sell **as is**, with no warranty and
+   usually no interior inspection. Some liens and mortgages survive the sale
+   instead of being cleared by the court's distribution, and the property may
+   still be occupied. Order a title search before bidding.
+4. **Bid** online on the auction date. The minimum bid is an opening figure only.
+5. **Win → 10% of the price plus a 1.5% buyer's premium**, due close of the next
+   business day.
+6. **Balance** — remaining 90% plus the $35 fee, due 5:00 PM ET on the 15th
+   calendar day after the auction.
+7. **Sheriff's Deed** is issued and you become owner of record. Gaining
+   *possession* can be a separate matter if the property is occupied.
+
+Missing a deadline forfeits the deposit and can bar you from future sales. These
+are the mortgage foreclosure terms, which cover most listings here; tax sales run
+on slightly different terms. Read the
+[full conditions of sale](https://phillysheriff.com/philadelphia-county-mortgage-foreclosure-conditions-of-sale/)
+before bidding.
+
 ## Data sources
 
 - [Philadelphia County sheriff sale docket](https://salesweb.civilview.com/Sales/SalesSearch?countyId=60) (Tyler Technologies CivilView)
 - [City of Philadelphia OPA property assessments](https://phl.carto.com/api/v2/sql) (OpenDataPhilly)
+
+Each card also links to Realtor.com's property record for the address, built
+from the OPA street address. Sheriff sale properties are usually not actively
+listed, so expect a tax/history record rather than a for-sale page.
+
+Note that the docket's `PropertyId` is regenerated per browsing session, so it
+cannot be used as an identity across runs. New-listing detection keys on the
+writ number plus the parcel number instead.
 
 Owner names are deliberately excluded from anything the dashboard publishes.

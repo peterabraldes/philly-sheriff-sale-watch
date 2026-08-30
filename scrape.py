@@ -65,7 +65,10 @@ def fetch_docket(session):
         if len(cells) < 5:
             continue
         rows.append({
+            # PropertyId is regenerated per session and is useless as an
+            # identity across runs; the writ number plus the parcel is stable.
             "property_id": property_id,
+            "listing_key": f"{cells[1]}|{cells[2]}",
             "detail_url": BASE + detail_path,
             "book_and_writ": cells[1],
             "opa_number": cells[2],
@@ -158,7 +161,7 @@ def matches_criteria(prop, cfg):
 
 def fetch_detail(session, listing, cache, delay):
     """Fetch and parse one sale detail page, using the on-disk cache."""
-    key = listing["property_id"]
+    key = listing["listing_key"]
     if key in cache:
         return cache[key]
 
@@ -214,6 +217,23 @@ def parse_detail(html):
         "postponements": sum(1 for h in history if "postpon" in h["status"].lower()),
         "current_status": history[0]["status"] if history else "",
     }
+
+
+def realtor_url(location, zip_code):
+    """Realtor.com's property-record permalink for an address.
+
+    Built from the OPA `location` field rather than the docket address,
+    because OPA already abbreviates street types the way Realtor.com does
+    ("1817 N WILLINGTON ST" rather than "1817 NORTH WILLINGTON STREET").
+    """
+    if not location or not zip_code:
+        return None
+    words = re.sub(r"[^A-Za-z0-9 ]", " ", location).split()
+    if not words:
+        return None
+    street = "-".join(w.capitalize() for w in words)
+    return ("https://www.realtor.com/realestateandhomes-detail/"
+            f"{street}_Philadelphia_PA_{str(zip_code).strip()[:5]}")
 
 
 def parse_money(text):
@@ -327,8 +347,10 @@ def main():
           f"${cfg['market_value_min']:,}-${cfg['market_value_max']:,})")
 
     print(f"Fetching sale details for {len(candidates)} properties...")
-    cache_path = DATA / "detail_cache.json"
-    cache = load_json(cache_path, {})
+    # Within-run only, deliberately not persisted: the detail page carries the
+    # sale date and status, and those are exactly what change between runs.
+    # A cache that survived the run would hide postponements.
+    cache = {}
 
     results = []
     for i, (row, prop) in enumerate(candidates, 1):
@@ -360,6 +382,7 @@ def main():
             "property_type": prop.get("category_code_description"),
             "building_description": prop.get("building_code_description"),
             "owner": prop.get("owner_1"),
+            "realtor_url": realtor_url(prop.get("location"), prop.get("zip_code")),
             "lat": prop.get("lat"),
             "lon": prop.get("lon"),
             **location,
@@ -367,19 +390,17 @@ def main():
         if i % 25 == 0:
             print(f"  [{i}/{len(candidates)}]")
 
-    cache_path.write_text(json.dumps(cache), encoding="utf-8")
-
-    # Flag anything that wasn't in the previous run. The very first run has
-    # nothing to compare against, so it records a baseline rather than
-    # announcing every listing as new.
+    # Flag anything that wasn't in the previous run, keyed on writ + parcel.
+    # The very first run has nothing to compare against, so it records a
+    # baseline rather than announcing every listing as new.
     seen_path = DATA / "seen.json"
     first_run = not seen_path.exists()
     seen = set(load_json(seen_path, []))
     for item in results:
-        item["is_new"] = (not first_run) and item["property_id"] not in seen
+        item["is_new"] = (not first_run) and item["listing_key"] not in seen
     if results:
         seen_path.write_text(
-            json.dumps(sorted(seen | {r["property_id"] for r in results})),
+            json.dumps(sorted(seen | {r["listing_key"] for r in results})),
             encoding="utf-8",
         )
 

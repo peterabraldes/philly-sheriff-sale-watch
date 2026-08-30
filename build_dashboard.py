@@ -443,6 +443,121 @@ h1 {
 .card-foot a:hover { border-bottom-color: var(--accent); }
 .card-foot a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
 
+/* ---------- how bidding works ---------- */
+
+.howto {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+}
+
+.howto > summary {
+  cursor: pointer;
+  padding: 15px 20px;
+  font-weight: 600;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  list-style: none;
+  border-radius: 10px;
+}
+
+.howto > summary::-webkit-details-marker { display: none; }
+
+.howto > summary::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-right: 1.6px solid var(--brick);
+  border-bottom: 1.6px solid var(--brick);
+  transform: rotate(-45deg);
+  transition: transform .15s;
+}
+
+.howto[open] > summary::before { transform: rotate(45deg); }
+.howto > summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.howto > summary .hint {
+  margin-left: auto;
+  font-weight: 400;
+  font-size: 12.5px;
+  color: var(--ink-3);
+}
+
+.howto-body {
+  padding: 4px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  border-top: 1px solid var(--line);
+  margin-top: -1px;
+  padding-top: 18px;
+}
+
+/* Numbered because these steps are a real sequence with hard deadlines:
+   miss step 4 and the deposit from step 1 is gone. */
+.steps {
+  list-style: none;
+  counter-reset: step;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.steps li {
+  counter-increment: step;
+  display: grid;
+  grid-template-columns: 26px 1fr;
+  gap: 12px;
+  align-items: start;
+}
+
+.steps li::before {
+  content: counter(step);
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: 5px;
+  width: 26px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+}
+
+.steps .t { font-weight: 600; display: block; }
+.steps .d { color: var(--ink-2); font-size: 13.5px; }
+
+.deadline {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--crit);
+  background: var(--crit-soft);
+  padding: 1px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.howto-note {
+  font-size: 13px;
+  color: var(--ink-2);
+  background: var(--warn-soft);
+  border-radius: 7px;
+  padding: 12px 14px;
+}
+
+.howto-note strong { color: var(--warn); }
+
+.howto-links { display: flex; flex-wrap: wrap; gap: 16px; font-size: 13px; font-weight: 600; }
+.howto-links a { color: var(--accent); text-decoration: none; border-bottom: 1px solid transparent; }
+.howto-links a:hover { border-bottom-color: var(--accent); }
+
 /* ---------- empty + footer ---------- */
 
 .empty {
@@ -586,6 +701,7 @@ function card(r) {
       <a href="${r.detail_url}" target="_blank" rel="noopener">Official docket &rarr;</a>
       ${r.lat ? `<a href="https://www.google.com/maps/search/?api=1&query=${r.lat},${r.lon}" target="_blank" rel="noopener">Map &rarr;</a>` : ''}
       ${r.lat ? `<a href="${streetViewLink(r)}" target="_blank" rel="noopener">Street View &rarr;</a>` : ''}
+      ${r.realtor_url ? `<a href="${r.realtor_url}" target="_blank" rel="noopener">Realtor.com &rarr;</a>` : ''}
     </div>
   </article>`;
 }
@@ -718,6 +834,66 @@ def build():
   </header>
 
   <dl class="summary">{summary}</dl>
+
+  <details class="howto">
+    <summary>How to bid on one of these
+      <span class="hint">Deposit is due before the auction opens</span>
+    </summary>
+    <div class="howto-body">
+      <ol class="steps">
+        <li><span><span class="t">Register with Bid4Assets</span>
+          <span class="d">Philadelphia runs its sheriff sales through Bid4Assets,
+          not in a courtroom. Create an account and complete registration ahead of
+          the sale date. Bidders must be 18 or older.</span></span></li>
+
+        <li><span><span class="t">Post the bidding deposit</span>
+          <span class="d">$10,000 plus a $35 non-refundable processing fee, and it
+          must clear <span class="deadline">before the auction opens</span>.
+          One deposit qualifies you for every property selling that day, so you do
+          not pay per house. Losing bidders are refunded within about ten business
+          days.</span></span></li>
+
+        <li><span><span class="t">Do your diligence first &mdash; this is the step that costs people money</span>
+          <span class="d">Properties sell <strong>as is</strong>, with no warranty and
+          usually no interior inspection. Some liens and mortgages survive the sale
+          rather than being cleared by the court's distribution, and the property may
+          still be occupied. Order a title search before you bid, not after.</span></span></li>
+
+        <li><span><span class="t">Bid on the auction date</span>
+          <span class="d">Bidding runs online. The minimum bid shown on each card is
+          the opening figure only &mdash; set your own ceiling in advance and hold to
+          it.</span></span></li>
+
+        <li><span><span class="t">If you win, pay the down payment immediately</span>
+          <span class="d">10% of the purchase price plus a 1.5% buyer's premium, due
+          <span class="deadline">close of the next business day</span>.</span></span></li>
+
+        <li><span><span class="t">Settle the balance</span>
+          <span class="d">The remaining 90% plus the $35 fee is due
+          <span class="deadline">5:00 PM ET on the 15th calendar day</span>
+          after the auction.</span></span></li>
+
+        <li><span><span class="t">Take the deed</span>
+          <span class="d">The Sheriff's Deed is issued and recorded, and you become
+          the owner of record. Getting <em>possession</em> can be a separate matter if
+          someone is living there.</span></span></li>
+      </ol>
+
+      <p class="howto-note" style="margin:0">
+        <strong>Miss a deadline and you lose the deposit.</strong> Failure to meet the
+        conditions of sale forfeits your down payment and can bar you from future
+        Philadelphia sheriff sales. Figures above are the mortgage foreclosure terms,
+        which cover most listings here; tax sales run on slightly different terms.
+        This is a summary &mdash; read the full conditions of sale before you bid.
+      </p>
+
+      <div class="howto-links">
+        <a href="https://phillysheriff.com/philadelphia-county-mortgage-foreclosure-conditions-of-sale/" target="_blank" rel="noopener">Mortgage foreclosure conditions of sale &rarr;</a>
+        <a href="https://www.bid4assets.com/philaforeclosures" target="_blank" rel="noopener">Bid4Assets auction portal &rarr;</a>
+        <a href="https://phillysheriff.com/property-listing/" target="_blank" rel="noopener">Sheriff's Office bidding info &rarr;</a>
+      </div>
+    </div>
+  </details>
 
   <div class="controls">
     <label class="field">
